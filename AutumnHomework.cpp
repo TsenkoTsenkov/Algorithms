@@ -7,15 +7,23 @@ int countBits(int a, bool isEven)
     int count {0};
     int i,k {0};
 
-    isEven ? i=30,k=0 : i=29,k=1;
+    if (isEven)
+    {
+        i = 30; //MAX positive int
+        k = 0;
+    }
+    else
+    {
+        i = 29;
+        k = 1;
+    }
 
     for (i; i>=k; i-=2)
     {
         if((a >> i) & 1)
         {
-            cout << '1';
             ++count;
-        } else { cout << '0';}
+        }
     }
     return count;
 }
@@ -25,6 +33,11 @@ int countEvenBits(int a)
     return countBits(a, true);
 }
 
+static inline void toUnsigned(int &a)
+{
+    if (a < 0) {a = -a;}
+}
+
 int countOddBits(int a)
 {
     return countBits(a, false);
@@ -32,6 +45,9 @@ int countOddBits(int a)
 
 bool compareBits(int a, int b, bool isEven)
 {
+    toUnsigned(a);
+    toUnsigned(b);
+
     int resA;
     int resB;
 
@@ -48,11 +64,11 @@ bool compareBits(int a, int b, bool isEven)
 
     if(resA < resB)
     {
-        return true;
+        return 0;
     }
     if(resA > resB)
     {
-        return false;
+        return 1;
     }
     else
     {
@@ -62,7 +78,7 @@ bool compareBits(int a, int b, bool isEven)
         }
         else
         {
-            return false;
+            return -1;
         }
     }
 }
@@ -84,7 +100,7 @@ void binaryInsertionSort(int* arr, int arraySize)
         while (l <= r)
         {
             med = l + (r - l) / 2;
-            if (compareWrapper(arr[med], x))
+            if (!compareWrapper(arr[med], x))
             {
                 r = med - 1;
             }
@@ -105,27 +121,24 @@ void binaryInsertionSort(int* arr, int arraySize)
 int main()
 {
     int arraySize;
-    // cin >> arraySize;
-    // if (arraySize < 0) {cout << "Negative value for array size error"; return -1;}
+    cin >> arraySize;
+    if (arraySize < 0) {cout << "Negative value for array size error"; return -1;}
 
-    // int* arr = new(nothrow) int[arraySize];
-    // if (!arr) {cout << "Memory allocation error"; return -1;}
+    int* arr = new(nothrow) int[arraySize];
+    if (!arr) {cout << "Memory allocation error"; return -1;}
 
+    for(int i=0; i<arraySize; ++i)
+    {
+        cin >> arr[i];
+    }
 
-    // for(int i=0; i<arraySize; ++i)
-    // {
-    //     cin >> arr[i];
-    // }
+    binaryInsertionSort(arr, arraySize);
 
-    //InsertionSort(arr, arraySize);
+    for(int i=0; i<arraySize; ++i)
+    {
+        cout << countEvenBits(arr[i]) + countOddBits(arr[i]) << ' ';
+    }
 
-    // for(int i=0; i<arraySize; ++i)
-    // {
-    //     cout << countBits(arr[i], true) << ' ' ;
-    // }
-    //cout << endl;
-    cout << countBits(50, true);
-
-    //delete[] arr;
+    delete[] arr;
     return 0;
 }
