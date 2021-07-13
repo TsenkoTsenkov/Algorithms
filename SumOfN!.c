@@ -8,5 +8,5 @@ int main() {
     for (i=1; i<=n; i++) {
         digits += log10(i);
     }
-    printf("%lu", (unsigned long)digits+1);
+    printf("%lu", (unsigned long)digits + 1);
 }
