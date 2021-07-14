@@ -43,7 +43,7 @@ int countOddBits(int a)
     return countBits(a, false);
 }
 
-bool compareBits(int a, int b, bool isEven)
+int compareBits(int a, int b, bool isEven)
 {
     toUnsigned(a);
     toUnsigned(b);
@@ -83,7 +83,7 @@ bool compareBits(int a, int b, bool isEven)
     }
 }
 
-bool compareWrapper(int a, int b)
+int compareWrapper(int a, int b)
 {
     return compareBits(a, b, true);
 }
@@ -118,6 +118,15 @@ void binaryInsertionSort(int* arr, int arraySize)
     }
 }
 
+void deleteElement(int * arr, int& size, int pos)
+{
+    --size;
+    for (int i=pos; i<size; ++i)
+    {
+        arr[i] = arr[i+1];
+    }
+}
+
 int main()
 {
     int arraySize;
@@ -136,7 +145,30 @@ int main()
 
     for(int i=0; i<arraySize; ++i)
     {
-        cout << countEvenBits(arr[i]) + countOddBits(arr[i]) << ' ';
+        cout << arr[i] << ' ';
+    }
+
+    int k{0};
+    for (int i=0; i<arraySize-1; ++i)
+    {
+        cout << "arr[" << i << "] =" << arr[i] << endl;
+        if (compareWrapper(arr[i], arr[i+1]) == -1)
+        {
+            k = i;
+            while (compareWrapper(arr[i], arr[i+1]) == -1)
+            {
+                deleteElement(arr, arraySize, i);
+                ++i;
+            }
+            deleteElement(arr, arraySize, i);
+            i = k - 1;
+        }
+    }
+
+    cout << '\n';
+    for(int i=0; i<arraySize; ++i)
+    {
+        cout << arr[i] << ' ';
     }
 
     delete[] arr;
