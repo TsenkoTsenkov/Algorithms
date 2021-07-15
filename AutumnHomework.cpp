@@ -132,7 +132,7 @@ int main()
     int arraySize;
     cin >> arraySize;
     if (arraySize < 0) {cout << "Negative value for array size error"; return -1;}
-
+    
     int* arr = new(nothrow) int[arraySize];
     if (!arr) {cout << "Memory allocation error"; return -1;}
 
@@ -148,20 +148,19 @@ int main()
         cout << arr[i] << ' ';
     }
 
-    int k{0};
+    int k, j {0};
     for (int i=0; i<arraySize-1; ++i)
     {
-        cout << "arr[" << i << "] =" << arr[i] << endl;
         if (compareWrapper(arr[i], arr[i+1]) == -1)
         {
-            k = i;
-            while (compareWrapper(arr[i], arr[i+1]) == -1)
+            k = arraySize;
+            j = i;
+            while (compareWrapper(arr[i], arr[i+1]) == -1 && (i < k))
             {
-                deleteElement(arr, arraySize, i);
-                ++i;
+                deleteElement(arr, arraySize, j);
+                i++;
             }
-            deleteElement(arr, arraySize, i);
-            i = k - 1;
+            deleteElement(arr, arraySize, j);
         }
     }
 
@@ -171,6 +170,7 @@ int main()
         cout << arr[i] << ' ';
     }
 
-    delete[] arr;
+   delete[] arr;
+
     return 0;
 }
