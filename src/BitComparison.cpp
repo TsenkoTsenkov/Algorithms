@@ -1,8 +1,40 @@
 #include <iostream>
 
-using namespace std;
+using std::cin;
+using std::cout;
+using std::nothrow;
 
-int countBits(int a, bool isEven)
+void binaryInsertionSort(int* arr, const int& arraySize);
+void printArr(int* arr, const int& arraySize);
+void deleteDuplicates(int* arr, int& arraySize);
+
+// int main()
+// {
+//     int arraySize;
+//     cin >> arraySize;
+//     if (arraySize < 0) {cout << "Negative value for array size error"; return -1;}
+    
+//     int* arr = new(nothrow) int[arraySize];
+//     if (!arr) {cout << "Memory allocation error"; return -1;}
+
+//     for(int i=0; i<arraySize; ++i)
+//     {
+//         cin >> arr[i];
+//     }
+
+//     binaryInsertionSort(arr, arraySize);
+//     printArr(arr, arraySize);
+//     deleteDuplicates(arr, arraySize);
+
+//     cout << '\n';
+//     printArr(arr, arraySize);
+
+//     delete[] arr;
+
+//     return 0;
+// }
+
+int countBits(const int& a, const bool& isEven)
 {
     int count {0};
     int i,k {0};
@@ -28,22 +60,22 @@ int countBits(int a, bool isEven)
     return count;
 }
 
-static int countEvenBits(int a)
+int countEvenBits(int a)
 {
     return countBits(a, true);
 }
 
-static inline void toUnsigned(int &a)
+inline void toUnsigned(int &a)
 {
     if (a < 0) {a = -a;}
 }
 
-static int countOddBits(int a)
+int countOddBits(int a)
 {
     return countBits(a, false);
 }
 
-static int compareBits(int a, int b, bool isEven)
+int compareBits(int a, int b, bool isEven)
 {
     toUnsigned(a);
     toUnsigned(b);
@@ -83,12 +115,12 @@ static int compareBits(int a, int b, bool isEven)
     }
 }
 
-static int compareWrapper(int a, int b)
+int compareWrapper(int a, int b)
 {
     return compareBits(a, b, true);
 }
 
-void binaryInsertionSort(int* arr, int arraySize)
+void binaryInsertionSort(int* arr, const int& arraySize)
 {
     int x, med, r, l, j {0};
     for (int i = 1; i<arraySize; ++i)
@@ -118,7 +150,7 @@ void binaryInsertionSort(int* arr, int arraySize)
     }
 }
 
-static void deleteElement(int * arr, int& size, int pos)
+void deleteElement(int* arr, int& size, const int& pos)
 {
     --size;
     for (int i=pos; i<size; ++i)
@@ -139,5 +171,13 @@ void deleteDuplicates(int* arr, int& arraySize)
             }
             deleteElement(arr, arraySize, i);
         }
+    }
+}
+
+void printArr(int* arr, const int& size)
+{
+    for (int i=0; i<size; ++i)
+    {
+        cout << arr[i] << ' ';
     }
 }
