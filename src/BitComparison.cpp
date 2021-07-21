@@ -38,15 +38,16 @@ int countBits(const int& a, const bool& isEven)
 {
     int count {0};
     int i,k {0};
+    constexpr int maxPosIntBit {30};
 
     if (isEven)
     {
-        i = 30; //MAX positive int
+        i = maxPosIntBit;
         k = 0;
     }
     else
     {
-        i = 29;
+        i = maxPosIntBit - 1;
         k = 1;
     }
 
