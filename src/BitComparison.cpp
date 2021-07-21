@@ -61,7 +61,7 @@ int countBits(const int& a, const bool& isEven)
     return count;
 }
 
-int countEvenBits(int a)
+int countEvenBits(const int& a)
 {
     return countBits(a, true);
 }
@@ -71,12 +71,12 @@ inline void toUnsigned(int &a)
     if (a < 0) {a = -a;}
 }
 
-int countOddBits(int a)
+int countOddBits(const int& a)
 {
     return countBits(a, false);
 }
 
-int compareBits(int a, int b, bool isEven)
+int compareBits(int& a, int& b, const bool& isEven)
 {
     toUnsigned(a);
     toUnsigned(b);
@@ -121,7 +121,7 @@ int compareWrapper(int a, int b)
     return compareBits(a, b, true);
 }
 
-void binaryInsertionSort(int* arr, const int& arraySize)
+void binaryInsertionSort(int *const arr, const int& arraySize)
 {
     int x, med, r, l, j {0};
     for (int i = 1; i<arraySize; ++i)
