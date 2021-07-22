@@ -6,7 +6,7 @@
 TEST_CASE("ExampleTestCase", "[BitComparison]")
 {
     int arraySize = 7;
-    int actual[7] = {5, 8, 15, 11, 6, 1, 2};
+    int* actual{new int[arraySize]{5, 8, 15, 11, 6, 1, 2}};
 
     binaryInsertionSort(actual, arraySize);
 
@@ -16,18 +16,18 @@ TEST_CASE("ExampleTestCase", "[BitComparison]")
     }
 
     int expected2[5] = {15, 5, 11, 6, 1};
-    deleteDuplicates(actual, arraySize);
+    int* newActual = deleteDuplicates(actual, arraySize);
     REQUIRE(arraySize == 5);
     for (int i=0; i<arraySize; i++)
     {
-        REQUIRE(actual[i] == expected2[i]);
+        REQUIRE(newActual[i] == expected2[i]);
     }
 }
 
 TEST_CASE("ExampleTestCase2", "[BitComparison]")
 {
     int arraySize = 7;
-    int actual[7] = {3, 3, 1, 2, 2, 2, 2};
+    int* actual{new int[arraySize]{3, 3, 1, 2, 2, 2, 2}};
 
     binaryInsertionSort(actual, arraySize);
 
@@ -37,18 +37,18 @@ TEST_CASE("ExampleTestCase2", "[BitComparison]")
     }
 
     int expected2[1] = {1};
-    deleteDuplicates(actual, arraySize);
+    int* newExpected = deleteDuplicates(actual, arraySize);
     REQUIRE(arraySize == 1);
     for (int i=0; i<arraySize; i++)
     {
-        REQUIRE(actual[i] == expected2[i]);
+        REQUIRE(newExpected[i] == expected2[i]);
     }
 }
 
 TEST_CASE("ExampleTestCase3", "[BitComparison]")
 {
     int arraySize = 5;
-    int actual[5] = {5, 5, 1, 5, 5};
+    int* actual{new int[arraySize]{5, 5, 1, 5, 5}};
 
     binaryInsertionSort(actual, arraySize);
 
@@ -58,18 +58,18 @@ TEST_CASE("ExampleTestCase3", "[BitComparison]")
     }
 
     int expected2[1] = {1};
-    deleteDuplicates(actual, arraySize);
+    int* newActual = deleteDuplicates(actual, arraySize);
     REQUIRE(arraySize == 1);
     for (int i=0; i<arraySize; i++)
     {
-        REQUIRE(actual[i] == expected2[i]);
+        REQUIRE(newActual[i] == expected2[i]);
     }
 }
 
 TEST_CASE("ExampleTestCase4", "[BitComparison]")
 {
     int arraySize = 5;
-    int actual[5] = {5, 5, 5, 5, 5};
+    int* actual{new int[arraySize]{5, 5, 5, 5, 5}};
 
     binaryInsertionSort(actual, arraySize);
 
@@ -78,6 +78,6 @@ TEST_CASE("ExampleTestCase4", "[BitComparison]")
         REQUIRE(actual[i] == expected[i]);
     }
 
-    deleteDuplicates(actual, arraySize);
+    int* newActual = deleteDuplicates(actual, arraySize);
     REQUIRE(arraySize == 0);
 }
