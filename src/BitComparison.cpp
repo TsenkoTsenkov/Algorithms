@@ -4,9 +4,9 @@ using std::cin;
 using std::cout;
 using std::nothrow;
 
-void binaryInsertionSort(int* arr, const int& arraySize);
-void printArr(int* arr, const int& arraySize);
-void deleteDuplicates(int* arr, int& arraySize);
+void binaryInsertionSort(int*const arr, const int& arraySize);
+void printArr(const int*const arr, const int& arraySize);
+int* deleteDuplicates(int*const arr, int& arraySize);
 
 // int main()
 // {
@@ -24,12 +24,17 @@ void deleteDuplicates(int* arr, int& arraySize);
 
 //     binaryInsertionSort(arr, arraySize);
 //     printArr(arr, arraySize);
-//     deleteDuplicates(arr, arraySize);
 
-//     cout << '\n';
-//     printArr(arr, arraySize);
+//     int* filteredArr = deleteDuplicates(arr, arraySize);
+//     if (!filteredArr) {return -1;}
 
-//     delete[] arr;
+//     if (arraySize != 0)
+//     {
+//         cout << '\n';
+//         printArr(filteredArr, arraySize);
+//     }
+
+//     delete[] filteredArr;
 
 //     return 0;
 // }
@@ -151,7 +156,7 @@ void binaryInsertionSort(int *const arr, const int& arraySize)
     }
 }
 
-void deleteElement(int* arr, int& size, const int& pos)
+void deleteElement(int*const arr, int& size, const int& pos)
 {
     --size;
     for (int i=pos; i<size; ++i)
@@ -160,8 +165,9 @@ void deleteElement(int* arr, int& size, const int& pos)
     }
 }
 
-void deleteDuplicates(int* arr, int& arraySize)
+int* deleteDuplicates(int*const arr, int& arraySize)
 {
+    int sizeCppy{arraySize};
     for (int i=0; i<arraySize-1; ++i)
     {
         if (compareWrapper(arr[i], arr[i+1]) == -1)
@@ -173,9 +179,20 @@ void deleteDuplicates(int* arr, int& arraySize)
             deleteElement(arr, arraySize, i);
         }
     }
+    if (sizeCppy == arraySize) {return arr;}
+
+    int* newArr = new(nothrow) int[arraySize];
+    if (!newArr) {cout << "Memory allocation error!"; delete[] arr; return nullptr;}
+
+    for (int i=0; i<arraySize; ++i)
+    {
+        newArr[i] = arr[i];
+    }
+    delete[] arr;
+    return newArr;
 }
 
-void printArr(int* arr, const int& size)
+void printArr(const int* const arr, const int& size)
 {
     for (int i=0; i<size; ++i)
     {
