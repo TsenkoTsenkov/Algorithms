@@ -11,6 +11,11 @@ add_executable(run_BitComparisonTests src/BitComparison.cpp tests/BitComparisonT
 target_compile_features(run_BitComparisonTests PUBLIC cxx_std_17)
 target_link_libraries(run_BitComparisonTests PRIVATE Catch2::Catch2)
 
+message("Creating target for test of the Cryptographic table program")
+add_executable(run_CryptographicTableTests src/CryptographicTable.cpp tests/CryptographicTests.cpp)
+target_compile_features(run_CryptographicTableTests PUBLIC cxx_std_17)
+target_link_libraries(run_CryptographicTableTests PRIVATE Catch2::Catch2)
+
 enable_testing()
 add_test(RegistrationTests run_BitComparisonTests)
 message("Build successfully")
