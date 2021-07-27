@@ -25,5 +25,9 @@ TEST_CASE("ExampleTestCase", "[CryptographicTable]")
 
     REQUIRE(strcmp(result, "ala bala0vh discoelectro proelectrocanah!") == 0);
 
+    char* decryptionInput = "ala somem discoelectroelectro proelectroelectrobala!";
+
+    REQUIRE(countDecryptedSymbols(decryptionInput, dic, 52, 8) == 14);
+
     delete[] result;
 }

@@ -36,10 +36,10 @@ size_t countEncryptionSymbols(const char* const input, const Dictionary*const di
 {
     size_t count{0};
     bool isKey{false};
-    for (int i=0; i<size; ++i)
+    for (size_t i=0; i<size; ++i)
     {
         isKey = false;
-        for(int j=0; j<dicSize; ++j)
+        for(size_t j=0; j<dicSize; ++j)
         {
             if (toUpper(dic[j].key) == toUpper(input[i]))
             {
@@ -72,7 +72,7 @@ char* encrypt(char* input, Dictionary* dic, size_t dicSize)
     char* encrypted = new(nothrow) char[resultSize+1];
     if (!encrypted) {cout << "Memory allocation error!"; return nullptr;}
     encrypted[0] = '\0';
-    
+
     bool isKey{false};
     size_t k{0};
     for (size_t i=0; i<inputSize; ++i)
@@ -97,3 +97,26 @@ char* encrypt(char* input, Dictionary* dic, size_t dicSize)
     }
     return encrypted;
 }
+
+size_t countDecryptionSymbols(const char* const input, const Dictionary*const dic, const size_t& size, const size_t& dicSize)
+{
+    size_t count{0};
+    for (size_t i=0; i<size; ++i)
+    {
+        
+    }
+    return count;
+}
+
+
+// char* decrypt(char* input, Dictionary* dic, size_t dicSize)
+// {
+//     size_t inputSize {strlen(input)};
+//     size_t resultSize{countEncryptionSymbols(input, dic, inputSize, dicSize)};
+//     if (inputSize == resultSize) {return nullptr;}
+
+//     char* decrypted = new(nothrow) char[resultSize+1];
+//     if(!decrypted) {cout << "Memory allocation error!\n"; return nullptr;}
+
+//     return decrypted;
+// }
