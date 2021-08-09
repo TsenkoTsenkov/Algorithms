@@ -22,6 +22,7 @@ TEST_CASE("ExampleTestCase", "[BitComparison]")
     {
         REQUIRE(newActual[i] == expected2[i]);
     }
+    delete[] actual;
 }
 
 TEST_CASE("ExampleTestCase2", "[BitComparison]")
