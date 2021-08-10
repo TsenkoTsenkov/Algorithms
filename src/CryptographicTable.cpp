@@ -25,9 +25,9 @@ char toUpper(char p)
     return p;
 }
 
-size_t countEncryptionSymbols(const char* const input, const Dictionary*const dic, const size_t& size, const size_t& dicSize)
+int countEncryptionSymbols(const char* const input, const Dictionary*const dic, const size_t& size, const size_t& dicSize)
 {
-    size_t count{0};
+    int count{0};
     bool isKey{false};
     for (size_t i=0; i<size; ++i)
     {
@@ -66,7 +66,7 @@ char * strcat(char *dest, const char *src)
 char* encrypt(char* input, const Dictionary*const dic, size_t dicSize)
 {
     size_t inputSize {strlen(input)};
-    size_t resultSize{countEncryptionSymbols(input, dic, inputSize, dicSize)};
+    int resultSize{countEncryptionSymbols(input, dic, inputSize, dicSize)};
     if (inputSize == resultSize) {return nullptr;}
 
     char* encrypted = new(nothrow) char[resultSize+1];
@@ -178,30 +178,11 @@ int extractWords(const char* text, char *** wordsPtr)
     return cnt;
 }
 
-//longest dictionary value
-size_t countDecryptionSymbols(const char* const input, const Dictionary*const dic, const size_t& size, const size_t& dicSize)
-{
-    char** words;
-    int resWords{extractWords(input, &words)};
-    if(!resWords) {return 0;}
-
-    size_t count{0};
-    size_t wordsCounter{0};
-
-    int i{0};
-    while(i < size)
-    {
-        ;
-    }
-
-    return count;
-}
-
-void longestSubstringValue(const char* const word, const Dictionary*const dic, const size_t& size, const size_t& dicSize, int& index, int& count)
+void longestSubstringValue(const char* const word, const Dictionary*const dic, const size_t& dicSize, int& count)
 {
     int max{0};
     size_t maxValue{0};
-    size_t maxIndex{-1};
+    size_t maxIndex{0};
     bool hasBeen{false};
     const char* ptr = nullptr;
 
@@ -210,7 +191,7 @@ void longestSubstringValue(const char* const word, const Dictionary*const dic, c
         for (size_t i=0; i<dicSize; ++i)
         {
             ptr = strstr(word, dic[i].value);
-            if(*ptr)
+            if(ptr)
             {
                 int diff = ptr - word;
                 if(!max)
@@ -227,18 +208,45 @@ void longestSubstringValue(const char* const word, const Dictionary*const dic, c
                         maxIndex = i;
                     }
                 }
+                if (!*ptr)
+                {
+                    break;
+                }
             }
         }
     }
 
-    if(!hasBeen)
+    if(!hasBeen || !*ptr)
     {
         count += strlen(word);
         return;
     }
     ptr = word + maxIndex;
-    count += maxValue;
-    return longestSubstringValue(ptr, dic, size, dicSize, index, count);
+    ++count;
+    return longestSubstringValue(ptr, dic, dicSize, count);
+}
+
+//longest dictionary value
+int countDecryptionSymbols(const char* const input, const Dictionary*const dic, const size_t& size, const size_t& dicSize)
+{
+    char** words;
+    int resWords{extractWords(input, &words)};
+    if(!resWords) {return 0;}
+
+    int count{0};
+    int wordsCounter{0};
+
+    int i{0};
+    while(i < size)
+    {
+        while (i<size && !isWordLetter(input[i])) { 
+            ++count;
+        }
+        longestSubstringValue(words[wordsCounter], dic, dicSize, count);
+        i+=strlen(words[wordsCounter++]);
+    }
+
+    return count;
 }
 
 // char* decrypt(char* input, Dictionary* dic, size_t dicSize)
