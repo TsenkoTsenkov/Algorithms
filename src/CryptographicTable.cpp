@@ -120,7 +120,7 @@ int wordCount(const char* text)
 // Check if a string is part of another string.
 // Return a pointer to the last character of the first occurence or NULL
 // A naive algorithm.
-const char* strstr(const char* where, const char* what)
+const char* strstr(const char* where, const char* what, const char* firstOccur)
 {
     size_t whatLen = strlen(what);
     size_t pos;
@@ -132,7 +132,11 @@ const char* strstr(const char* where, const char* what)
                 break;
             }
         }
-        if (!what[pos]) return &where[pos];
+        if (!what[pos])
+        {
+            firstOccur = where;
+            return &where[pos];
+        } 
         ++where;
     }
     return nullptr;
@@ -178,52 +182,92 @@ int extractWords(const char* text, char *** wordsPtr)
     return cnt;
 }
 
-void longestSubstringValue(const char* const word, const Dictionary*const dic, const size_t& dicSize, int& count)
+char* strncpy(char * destination, const char * source, size_t num)
+{
+    if(!source) {return nullptr;}
+    size_t i{0};
+    while(i < num && *source)
+    {
+        *destination++ = *source++;
+        i++;
+    }
+    destination[num] = '/0';
+    return destination - num;
+}
+
+//copies the last n characters of source into destination;
+char* strlcpy(char * destination, const char * source, size_t num)
+{
+    if(!source) {return nullptr;}
+    size_t sourceLen = strlen(source);
+    size_t i{sourceLen-num};
+    while(i < sourceLen)
+    {
+        *destination++ = source[i];
+        i++;
+    }
+    destination[sourceLen-num] = '/0';
+    return destination - num;
+}
+
+void longestSubstringValue(const char* const word, const Dictionary*const dic, const size_t& dicSize, int& count, size_t wordSize)
 {
     int max{0};
     size_t maxValue{0};
-    size_t maxIndex{0};
     bool hasBeen{false};
-    const char* ptr = nullptr;
-
-    if(*word)
+    const char* tmpLastOccur{nullptr};
+    const char* firstOccur{nullptr};
+    const char* lastOccur{nullptr};
+    int diff{0};
+    
+    if(word)
     {
         for (size_t i=0; i<dicSize; ++i)
         {
-            ptr = strstr(word, dic[i].value);
-            if(ptr)
+            tmpLastOccur = strstr(word, dic[i].value, firstOccur);
+            if(tmpLastOccur)
             {
-                int diff = ptr - word;
+                diff = tmpLastOccur - firstOccur;
                 if(!max)
                 {
                     hasBeen = true;
                     max = diff;
-                    maxIndex = i;
+                    lastOccur = firstOccur;
                 }
                 else
                 {
                     if (max < diff)
                     {
                         max = diff;
-                        maxIndex = i;
+                        lastOccur = firstOccur;
                     }
                 }
-                if (!*ptr)
+                if (!*tmpLastOccur)
                 {
                     break;
                 }
             }
         }
-    }
+    } else {return;}
 
-    if(!hasBeen || !*ptr)
+    if(!hasBeen)
     {
         count += strlen(word);
         return;
     }
-    ptr = word + maxIndex;
     ++count;
-    return longestSubstringValue(ptr, dic, dicSize, count);
+    
+    char* bef = new(nothrow) char[firstOccur - word + 1];
+    if(!bef) {cout << "Memory allocation error!";return;}
+    strncpy(bef, word, firstOccur - word);
+    longestSubstringValue(bef, dic, dicSize, count, firstOccur - word);
+    delete[] bef;
+
+    char* after = new(nothrow) char[wordSize - (lastOccur - word) + 1];
+    if(!after) {cout << "Memory allocation error!";return;}
+    strlcpy(after, word, wordSize - (lastOccur - word));
+    longestSubstringValue(after, dic, dicSize, count, wordSize - (lastOccur - word));
+    delete[] after;
 }
 
 //longest dictionary value
@@ -237,12 +281,13 @@ int countDecryptionSymbols(const char* const input, const Dictionary*const dic, 
     int wordsCounter{0};
 
     int i{0};
-    while(i < size)
+    while(i < size && wordsCounter < resWords)
     {
         while (i<size && !isWordLetter(input[i])) { 
             ++count;
+            ++i;
         }
-        longestSubstringValue(words[wordsCounter], dic, dicSize, count);
+        longestSubstringValue(words[wordsCounter], dic, dicSize, count, size);
         i+=strlen(words[wordsCounter++]);
     }
 
