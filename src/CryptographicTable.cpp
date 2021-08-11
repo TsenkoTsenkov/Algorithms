@@ -116,11 +116,11 @@ int wordCount(const char* text)
     return cnt;
 }
 
-//L10 cpy/paste example
+//cpy paste form lecture 10
 // Check if a string is part of another string.
-// Return a pointer to the last character of the first occurence or NULL
+// Return a pointer to the first occurrence or NULL
 // A naive algorithm.
-const char* strstr(const char* where, const char* what, const char* firstOccur)
+const char* strstr(const char* where, const char* what, size_t lastIndex)
 {
     size_t whatLen = strlen(what);
     size_t pos;
@@ -133,9 +133,9 @@ const char* strstr(const char* where, const char* what, const char* firstOccur)
             }
         }
         if (!what[pos])
-        {
-            firstOccur = where;
-            return &where[pos];
+        {   
+            lastIndex = whatLen - (whereEnd - where); 
+            return where;
         } 
         ++where;
     }
@@ -182,32 +182,22 @@ int extractWords(const char* text, char *** wordsPtr)
     return cnt;
 }
 
-char* strncpy(char * destination, const char * source, size_t num)
+char* strncpy(char * dst, const char * src, size_t num)
 {
-    if(!source) {return nullptr;}
-    size_t i{0};
-    while(i < num && *source)
-    {
-        *destination++ = *source++;
-        i++;
-    }
-    destination[num] = '/0';
-    return destination - num;
+   while (num-- && (*dst++ = *src++))
+    ;
+    return dst - num;
 }
 
 //copies the last n characters of source into destination;
-char* strlcpy(char * destination, const char * source, size_t num)
+char* strlcpy(char * dst, const char * src, size_t num)
 {
-    if(!source) {return nullptr;}
-    size_t sourceLen = strlen(source);
-    size_t i{sourceLen-num};
-    while(i < sourceLen)
-    {
-        *destination++ = source[i];
-        i++;
-    }
-    destination[sourceLen-num] = '/0';
-    return destination - num;
+    while (*src++)
+        ;
+    src -= num + 1;
+    while (*dst++ = *src++)
+        ;
+    return dst - num;
 }
 
 void longestSubstringValue(const char* const word, const Dictionary*const dic, const size_t& dicSize, int& count, size_t wordSize)
@@ -216,35 +206,35 @@ void longestSubstringValue(const char* const word, const Dictionary*const dic, c
     size_t maxValue{0};
     bool hasBeen{false};
     const char* tmpLastOccur{nullptr};
+    const char* tmpFirstOccur{nullptr};
     const char* firstOccur{nullptr};
     const char* lastOccur{nullptr};
     int diff{0};
-    
+    size_t lastOccurIndex = 0;
+
     if(word)
     {
         for (size_t i=0; i<dicSize; ++i)
         {
-            tmpLastOccur = strstr(word, dic[i].value, firstOccur);
-            if(tmpLastOccur)
+            tmpFirstOccur = strstr(word, dic[i].value, lastOccurIndex);
+            if(tmpFirstOccur)
             {
-                diff = tmpLastOccur - firstOccur;
+                tmpLastOccur = &word[lastOccurIndex];
+                diff = tmpLastOccur - tmpFirstOccur;
                 if(!max)
                 {
                     hasBeen = true;
                     max = diff;
-                    lastOccur = firstOccur;
+                    lastOccur = tmpLastOccur;
                 }
                 else
                 {
                     if (max < diff)
                     {
                         max = diff;
-                        lastOccur = firstOccur;
+                        lastOccur = tmpLastOccur;
+                        firstOccur = tmpFirstOccur;
                     }
-                }
-                if (!*tmpLastOccur)
-                {
-                    break;
                 }
             }
         }
@@ -256,18 +246,28 @@ void longestSubstringValue(const char* const word, const Dictionary*const dic, c
         return;
     }
     ++count;
-    
-    char* bef = new(nothrow) char[firstOccur - word + 1];
-    if(!bef) {cout << "Memory allocation error!";return;}
-    strncpy(bef, word, firstOccur - word);
-    longestSubstringValue(bef, dic, dicSize, count, firstOccur - word);
-    delete[] bef;
 
-    char* after = new(nothrow) char[wordSize - (lastOccur - word) + 1];
-    if(!after) {cout << "Memory allocation error!";return;}
-    strlcpy(after, word, wordSize - (lastOccur - word));
-    longestSubstringValue(after, dic, dicSize, count, wordSize - (lastOccur - word));
-    delete[] after;
+    size_t charsCount = firstOccur - word;
+    if(charsCount > 0)
+    {
+        char* bef = new(nothrow) char[charsCount + 1];
+        if(!bef) {cout << "Memory allocation error!";return;}
+        strncpy(bef, word, charsCount);
+        bef[charsCount] = '\0';
+        longestSubstringValue(bef, dic, dicSize, count, charsCount);
+        delete[] bef;
+    }
+
+    charsCount = &word[wordSize] - lastOccur;
+    if(charsCount > 0)
+    {
+        char* after = new(nothrow) char[charsCount + 1];
+        if(!after) {cout << "Memory allocation error!";return;}
+        strlcpy(after, word, charsCount);
+        after[charsCount] = '\0';
+        longestSubstringValue(after, dic, dicSize, count, charsCount);
+        delete[] after;
+    }
 }
 
 //longest dictionary value
@@ -287,12 +287,30 @@ int countDecryptionSymbols(const char* const input, const Dictionary*const dic, 
             ++count;
             ++i;
         }
-        longestSubstringValue(words[wordsCounter], dic, dicSize, count, size);
+        longestSubstringValue(words[wordsCounter], dic, dicSize, count, strlen(words[wordsCounter]));
         i+=strlen(words[wordsCounter++]);
     }
 
     return count;
 }
+
+void printArr(char arr[], size_t size)
+{
+    for (size_t i=0; i<size; ++i)
+    {
+        cout << arr[i];
+    }
+}
+
+// int main()
+// {
+//     char dst[50];
+//     const char* src = "arivederchi";
+//     strlcpy(dst, src, 4);
+//     dst[5] = '\0';
+//     printArr(dst, 5);
+//     return 0;
+// }
 
 // char* decrypt(char* input, Dictionary* dic, size_t dicSize)
 // {

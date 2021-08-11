@@ -22,7 +22,7 @@ TEST_CASE("ExampleTestCase", "[BitComparison]")
     {
         REQUIRE(newActual[i] == expected2[i]);
     }
-    delete[] actual;
+    delete[] newActual;
 }
 
 TEST_CASE("ExampleTestCase2", "[BitComparison]")
@@ -44,6 +44,7 @@ TEST_CASE("ExampleTestCase2", "[BitComparison]")
     {
         REQUIRE(newExpected[i] == expected2[i]);
     }
+    delete[] newExpected;
 }
 
 TEST_CASE("ExampleTestCase3", "[BitComparison]")
@@ -65,6 +66,7 @@ TEST_CASE("ExampleTestCase3", "[BitComparison]")
     {
         REQUIRE(newActual[i] == expected2[i]);
     }
+    delete[] newActual;
 }
 
 TEST_CASE("ExampleTestCase4", "[BitComparison]")
@@ -81,4 +83,5 @@ TEST_CASE("ExampleTestCase4", "[BitComparison]")
 
     int* newActual = deleteDuplicates(actual, arraySize);
     REQUIRE(arraySize == 0);
+    delete[] newActual;
 }
