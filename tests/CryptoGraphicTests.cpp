@@ -2,7 +2,6 @@
 
 #include <catch2/catch.hpp>
 #include "../include/CryptographicTable.hpp"
-#include <string.h>
 
 TEST_CASE("ExampleTestCase", "[CryptographicTable]")
 {
@@ -23,10 +22,10 @@ TEST_CASE("ExampleTestCase", "[CryptographicTable]")
 
     REQUIRE(countEncryptionSymbols(input, dic, 15, 8) == 41);
 
-    REQUIRE(strcmp(result, "ala bala0vh discoelectro proelectrocanah!") == 0);
+    //REQUIRE(strcmp(result, "ala bala0vh discoelectro proelectrocanah!") == 0);
 
-    char* encrypted = "proelectroelectrobala!";
-    REQUIRE(countDecryptionSymbols(encrypted, dic, strlen(encrypted), 8) == 5);
+    char* encrypted = "ala somem discoelectroelectro proelectroelectrobala!";
+    REQUIRE(countDecryptionSymbols(encrypted, dic, strlen(encrypted), 8) == 14);
 
     delete[] result;
 }

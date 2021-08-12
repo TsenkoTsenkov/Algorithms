@@ -21,8 +21,8 @@ size_t strlen(const char* text)
 char toUpper(char p)
 {
     if(p >= 'a' && p <= 'z')
-        p -= 32;
-    return p;
+        return p - 'a' + 'A';
+    else {return p;}
 }
 
 int countEncryptionSymbols(const char* const input, const Dictionary*const dic, const size_t& size, const size_t& dicSize)
@@ -120,23 +120,26 @@ int wordCount(const char* text)
 // Check if a string is part of another string.
 // Return a pointer to the first occurrence or NULL
 // A naive algorithm.
-const char* strstr(const char* where, const char* what, size_t lastIndex)
+const char* strstr(const char* where, const char* what, size_t& lastIndex)
 {
     size_t whatLen = strlen(what);
+    size_t whereLen = strlen(where);
     size_t pos;
-    const char* whereEnd = where + strlen(where);
-
+    const char* whereEnd = where + whereLen;
+    lastIndex = 0;
     while (where+whatLen <= whereEnd) {
         for (pos = 0; pos < whatLen; ++pos) {
             if (where[pos] != what[pos]) {
+                lastIndex -= pos;
                 break;
             }
+            ++lastIndex;
         }
         if (!what[pos])
-        {   
-            lastIndex = whatLen - (whereEnd - where); 
+        { 
             return where;
-        } 
+        }
+        ++lastIndex;
         ++where;
     }
     return nullptr;
@@ -200,15 +203,19 @@ char* strlcpy(char * dst, const char * src, size_t num)
     return dst - num;
 }
 
-void longestSubstringValue(const char* const word, const Dictionary*const dic, const size_t& dicSize, int& count, size_t wordSize)
+typedef char* (*strFun)(char*, const char*, size_t);
+void operateWithString(const char* word, const Dictionary*const dic, const size_t& dicSize, size_t& count,size_t charsCount, strFun fun);
+
+void longestSubstringValue(const char* const word, const Dictionary*const dic, const size_t& dicSize, size_t& count, size_t wordSize)
 {
     int max{0};
-    size_t maxValue{0};
     bool hasBeen{false};
+
     const char* tmpLastOccur{nullptr};
     const char* tmpFirstOccur{nullptr};
     const char* firstOccur{nullptr};
     const char* lastOccur{nullptr};
+
     int diff{0};
     size_t lastOccurIndex = 0;
 
@@ -225,6 +232,7 @@ void longestSubstringValue(const char* const word, const Dictionary*const dic, c
                 {
                     hasBeen = true;
                     max = diff;
+                    firstOccur = tmpFirstOccur;
                     lastOccur = tmpLastOccur;
                 }
                 else
@@ -249,47 +257,52 @@ void longestSubstringValue(const char* const word, const Dictionary*const dic, c
 
     size_t charsCount = firstOccur - word;
     if(charsCount > 0)
-    {
-        char* bef = new(nothrow) char[charsCount + 1];
-        if(!bef) {cout << "Memory allocation error!";return;}
-        strncpy(bef, word, charsCount);
-        bef[charsCount] = '\0';
-        longestSubstringValue(bef, dic, dicSize, count, charsCount);
-        delete[] bef;
-    }
+        operateWithString(word, dic, dicSize, count, charsCount, strncpy);
 
     charsCount = &word[wordSize] - lastOccur;
     if(charsCount > 0)
-    {
-        char* after = new(nothrow) char[charsCount + 1];
-        if(!after) {cout << "Memory allocation error!";return;}
-        strlcpy(after, word, charsCount);
-        after[charsCount] = '\0';
-        longestSubstringValue(after, dic, dicSize, count, charsCount);
-        delete[] after;
-    }
+        operateWithString(word, dic, dicSize, count, charsCount, strlcpy);
+}
+
+void operateWithString(const char* word, const Dictionary*const dic, const size_t& dicSize, size_t& count,size_t charsCount, strFun fun)
+{
+    char *newString = new(nothrow) char[charsCount + 1];
+    if(!newString) {cout << "Memory allocation error!";return;}
+
+    fun(newString, word, charsCount);
+    newString[charsCount] = '\0';
+    longestSubstringValue(newString, dic, dicSize, count, charsCount);
+
+    delete[] newString;
 }
 
 //longest dictionary value
-int countDecryptionSymbols(const char* const input, const Dictionary*const dic, const size_t& size, const size_t& dicSize)
+size_t countDecryptionSymbols(const char* const input, const Dictionary*const dic, const size_t& size, const size_t& dicSize)
 {
     char** words;
     int resWords{extractWords(input, &words)};
     if(!resWords) {return 0;}
 
-    int count{0};
+    size_t count{0};
     int wordsCounter{0};
 
-    int i{0};
-    while(i < size && wordsCounter < resWords)
+    size_t i{0};
+    while(i < size)
     {
         while (i<size && !isWordLetter(input[i])) { 
             ++count;
             ++i;
         }
+        if (i == size){break;}
         longestSubstringValue(words[wordsCounter], dic, dicSize, count, strlen(words[wordsCounter]));
         i+=strlen(words[wordsCounter++]);
     }
+
+    for (int i=0; i<resWords; i++)
+    {
+        delete[] words[i];
+    }
+    delete[] words;
 
     return count;
 }
@@ -302,24 +315,82 @@ void printArr(char arr[], size_t size)
     }
 }
 
-// int main()
-// {
-//     char dst[50];
-//     const char* src = "arivederchi";
-//     strlcpy(dst, src, 4);
-//     dst[5] = '\0';
-//     printArr(dst, 5);
-//     return 0;
-// }
+void longestDecrypt(const char* const word, char* result, const Dictionary*const dic, const size_t& dicSize, size_t wordSize)
+{
+    int max{0};
+    bool hasBeen{false};
 
-// char* decrypt(char* input, Dictionary* dic, size_t dicSize)
-// {
-//     size_t inputSize {strlen(input)};
-//     size_t resultSize{countEncryptionSymbols(input, dic, inputSize, dicSize)};
-//     if (inputSize == resultSize) {return nullptr;}
+    const char* tmpLastOccur{nullptr};
+    const char* tmpFirstOccur{nullptr};
+    const char* firstOccur{nullptr};
+    const char* lastOccur{nullptr};
 
-//     char* decrypted = new(nothrow) char[resultSize+1];
-//     if(!decrypted) {cout << "Memory allocation error!\n"; return nullptr;}
+    int diff{0};
+    size_t lastOccurIndex = 0;
 
-//     return decrypted;
-// }
+    if(word)
+    {
+        for (size_t i=0; i<dicSize; ++i)
+        {
+            tmpFirstOccur = strstr(word, dic[i].value, lastOccurIndex);
+            if(tmpFirstOccur)
+            {
+                tmpLastOccur = &word[lastOccurIndex];
+                diff = tmpLastOccur - tmpFirstOccur;
+                if(!max)
+                {
+                    hasBeen = true;
+                    max = diff;
+                    firstOccur = tmpFirstOccur;
+                    lastOccur = tmpLastOccur;
+                }
+                else
+                {
+                    if (max < diff)
+                    {
+                        max = diff;
+                        lastOccur = tmpLastOccur;
+                        firstOccur = tmpFirstOccur;
+                    }
+                }
+            }
+        }
+    } else {return;}
+
+    if(!hasBeen)
+    {
+       // count += strlen(word);
+        return;
+    }
+    //++count;
+
+}
+
+char* decrypt(char* input, Dictionary* dic, size_t dicSize)
+{
+    size_t size {strlen(input)};
+    size_t resultSize{countDecryptionSymbols(input, dic, size, dicSize)};
+    
+
+    char* decrypted = new(nothrow) char[resultSize+1];
+    if (!decrypted) {cout << "Memory allocation error!"; return nullptr;}
+
+    char** words;
+    int resWords{extractWords(input, &words)};
+    if(!resWords) {delete[] decrypted; return nullptr;}
+
+    int wordsCounter{0};
+    size_t i{0};
+    while(i < size)
+    {
+        while (i < size && !isWordLetter(input[i]))
+        {
+            decrypted[i] = input[i];
+            ++i;
+        }
+        if (i == size){break;}
+        longestDecrypt(words[wordsCounter], decrypted, dic, dicSize, strlen(words[wordsCounter]));
+    }
+
+    return decrypted;
+}
